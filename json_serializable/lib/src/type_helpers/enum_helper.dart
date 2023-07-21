@@ -3,6 +3,7 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'package:analyzer/dart/element/type.dart';
+import 'package:json_annotation/json_annotation.dart';
 import 'package:source_gen/source_gen.dart';
 import 'package:source_helper/source_helper.dart';
 
@@ -13,7 +14,9 @@ import '../type_helper.dart';
 final simpleExpression = RegExp('^[a-zA-Z_]+\$');
 
 class EnumHelper extends TypeHelper<TypeHelperContextWithConfig> {
-  const EnumHelper();
+  final JsonEnum? jsonEnumConfig;
+
+  const EnumHelper(this.jsonEnumConfig);
 
   @override
   String? serialize(
@@ -21,7 +24,7 @@ class EnumHelper extends TypeHelper<TypeHelperContextWithConfig> {
     String expression,
     TypeHelperContextWithConfig context,
   ) {
-    final memberContent = enumValueMapFromType(targetType);
+    final memberContent = enumValueMapFromType(targetType, jsonEnumConfig);
 
     if (memberContent == null) {
       return null;
@@ -30,7 +33,7 @@ class EnumHelper extends TypeHelper<TypeHelperContextWithConfig> {
     context.addMember(memberContent);
 
     if (targetType.isNullableType ||
-        enumFieldWithNullInEncodeMap(targetType) == true) {
+        enumFieldWithNullInEncodeMap(targetType, jsonEnumConfig) == true) {
       return '${constMapName(targetType)}[$expression]';
     } else {
       return '${constMapName(targetType)}[$expression]!';
@@ -44,7 +47,7 @@ class EnumHelper extends TypeHelper<TypeHelperContextWithConfig> {
     TypeHelperContextWithConfig context,
     bool defaultProvided,
   ) {
-    final memberContent = enumValueMapFromType(targetType);
+    final memberContent = enumValueMapFromType(targetType, jsonEnumConfig);
 
     if (memberContent == null) {
       return null;

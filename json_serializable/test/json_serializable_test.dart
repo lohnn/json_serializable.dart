@@ -30,7 +30,7 @@ Future<void> main() async {
 
   testAnnotatedElements(
     jsonEnumTestReader,
-    const JsonEnumGenerator(),
+    JsonEnumGenerator(),
     expectedAnnotatedTests: {
       'EnumValueIssue1147',
       'EnumValueNotAField',

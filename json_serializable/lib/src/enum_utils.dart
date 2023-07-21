@@ -5,6 +5,7 @@
 import 'package:analyzer/dart/constant/value.dart';
 import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/dart/element/type.dart';
+import 'package:build/build.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:source_gen/source_gen.dart';
 import 'package:source_helper/source_helper.dart';
@@ -19,8 +20,11 @@ String constMapName(DartType targetType) =>
 ///
 /// Otherwise, returns `true` if [targetType] is nullable OR if one of the
 /// encoded values of the enum is `null`.
-bool? enumFieldWithNullInEncodeMap(DartType targetType) {
-  final enumMap = _enumMap(targetType);
+bool? enumFieldWithNullInEncodeMap(
+  DartType targetType,
+  JsonEnum? buildConfig,
+) {
+  final enumMap = _enumMap(targetType, buildConfig);
 
   if (enumMap == null) return null;
 
@@ -32,11 +36,15 @@ bool? enumFieldWithNullInEncodeMap(DartType targetType) {
 }
 
 String? enumValueMapFromType(
-  DartType targetType, {
+  DartType targetType,
+  JsonEnum? buildConfig, {
   bool nullWithNoAnnotation = false,
 }) {
-  final enumMap =
-      _enumMap(targetType, nullWithNoAnnotation: nullWithNoAnnotation);
+  final enumMap = _enumMap(
+    targetType,
+    buildConfig,
+    nullWithNoAnnotation: nullWithNoAnnotation,
+  );
 
   if (enumMap == null) return null;
 
@@ -49,17 +57,19 @@ String? enumValueMapFromType(
 }
 
 Map<FieldElement, Object?>? _enumMap(
-  DartType targetType, {
+  DartType targetType,
+  JsonEnum? buildConfig, {
   bool nullWithNoAnnotation = false,
 }) {
   final targetTypeElement = targetType.element;
   if (targetTypeElement == null) return null;
   final annotation = _jsonEnumChecker.firstAnnotationOf(targetTypeElement);
-  final jsonEnum = _fromAnnotation(annotation);
+  final jsonEnum = _fromAnnotation(annotation).combineWith(buildConfig);
 
   final enumFields = iterateEnumFields(targetType);
 
-  if (enumFields == null || (nullWithNoAnnotation && !jsonEnum.alwaysCreate)) {
+  if (enumFields == null ||
+      (nullWithNoAnnotation && !(jsonEnum.alwaysCreate ?? false))) {
     return null;
   }
 
@@ -118,7 +128,10 @@ Object? _generateEntry({
         );
       }
     } else {
-      return encodedFieldName(jsonEnum.fieldRename, field.name);
+      return encodedFieldName(
+        jsonEnum.fieldRename ?? FieldRename.none,
+        field.name,
+      );
     }
   } else {
     final reader = ConstantReader(annotation);
@@ -146,8 +159,8 @@ JsonEnum _fromAnnotation(DartObject? dartObject) {
   }
   final reader = ConstantReader(dartObject);
   return JsonEnum(
-    alwaysCreate: reader.read('alwaysCreate').literalValue as bool,
-    fieldRename: readEnum(reader.read('fieldRename'), FieldRename.values)!,
+    alwaysCreate: reader.read('alwaysCreate').literalValue as bool?,
+    fieldRename: readEnum(reader.read('fieldRename'), FieldRename.values),
     valueField: reader.read('valueField').literalValue as String?,
   );
 }

@@ -24,7 +24,6 @@ class Settings {
   static const _coreHelpers = <TypeHelper>[
     IterableHelper(),
     MapHelper(),
-    EnumHelper(),
     RecordHelper(),
     ValueHelper(),
   ];
@@ -39,14 +38,21 @@ class Settings {
 
   final List<TypeHelper> _typeHelpers;
 
+  late final List<TypeHelper> _helpersWithConfig = [
+    EnumHelper(jsonEnumConfig),
+  ];
+
   Iterable<TypeHelper> get allHelpers => const <TypeHelper>[
         ConvertHelper(),
         JsonConverterHelper(),
         GenericFactoryHelper(),
-      ].followedBy(_typeHelpers).followedBy(_coreHelpers);
+      ]
+          .followedBy(_helpersWithConfig)
+          .followedBy(_typeHelpers)
+          .followedBy(_coreHelpers);
 
   final ClassConfig jsonSerializableConfig;
-  final ClassConfig jsonEnumConfig;
+  final JsonEnum? jsonEnumConfig;
 
   /// Creates an instance of [Settings].
   ///
@@ -55,13 +61,11 @@ class Settings {
   /// [UriHelper].
   Settings({
     JsonSerializable? jsonSerializableConfig,
-    JsonEnum? jsonEnumConfig,
+    this.jsonEnumConfig,
     List<TypeHelper>? typeHelpers,
   })  : jsonSerializableConfig = jsonSerializableConfig != null
             ? ClassConfig.fromJsonSerializable(jsonSerializableConfig)
             : ClassConfig.defaults,
-        // TODO(lohnn): Enum configs and stuff
-        jsonEnumConfig = ClassConfig.defaults,
         _typeHelpers = typeHelpers ?? defaultHelpers;
 
   /// Creates an instance of [Settings].

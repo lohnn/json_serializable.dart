@@ -282,7 +282,7 @@ ClassConfig? _annotation(ClassConfig config, InterfaceType source) {
     return null;
   }
 
-  return mergeConfig(
+  return mergeJsonSerializableConfig(
     config,
     ConstantReader(annotations.single),
     classElement: source.element as ClassElement,

@@ -79,7 +79,7 @@ JsonSerializable _valueForAnnotation(ConstantReader reader) => JsonSerializable(
 /// Note: if [JsonSerializable.genericArgumentFactories] is `false` for [reader]
 /// and `true` for [config], the corresponding field in the return value will
 /// only be `true` if [classElement] has type parameters.
-ClassConfig mergeConfig(
+ClassConfig mergeJsonSerializableConfig(
   ClassConfig config,
   ConstantReader reader, {
   required ClassElement classElement,

@@ -23,12 +23,14 @@ class GeneratorHelper extends HelperCore with EncodeHelper, DecodeHelper {
     ClassElement element,
     ConstantReader annotation,
   ) : super(
-            element,
-            mergeConfig(
-              _generator.jsonSerializableConfig,
-              annotation,
-              classElement: element,
-            ));
+          element,
+          mergeJsonSerializableConfig(
+            _generator.jsonSerializableConfig,
+            annotation,
+            classElement: element,
+          ),
+          _generator.jsonEnumConfig,
+        );
 
   @override
   void addMember(String memberContent) {

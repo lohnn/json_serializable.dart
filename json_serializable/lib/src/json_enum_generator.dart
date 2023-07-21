@@ -63,8 +63,11 @@ class JsonEnumGenerator extends GeneratorForAnnotation<JsonEnum> {
       );
     }
 
-    final value =
-        enumValueMapFromType(element.thisType, nullWithNoAnnotation: true);
+    final value = enumValueMapFromType(
+      element.thisType,
+      _settings.jsonEnumConfig,
+      nullWithNoAnnotation: true,
+    );
 
     return [
       if (value != null) value,

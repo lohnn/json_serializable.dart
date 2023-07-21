@@ -4,6 +4,7 @@
 
 import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/dart/element/type.dart';
+import 'package:json_annotation/json_annotation.dart';
 import 'package:meta/meta.dart';
 import 'package:source_gen/source_gen.dart';
 import 'package:source_helper/source_helper.dart';
@@ -19,8 +20,9 @@ import 'utils.dart';
 abstract class HelperCore {
   final ClassElement element;
   final ClassConfig config;
+  final JsonEnum? enumConfig;
 
-  HelperCore(this.element, this.config);
+  HelperCore(this.element, this.config, this.enumConfig);
 
   Iterable<TypeHelper> get allTypeHelpers;
 

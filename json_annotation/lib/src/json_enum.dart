@@ -5,8 +5,6 @@
 import 'package:meta/meta_meta.dart';
 
 import '../json_annotation.dart';
-import 'enum_helpers.dart';
-import 'json_serializable.dart';
 
 part 'json_enum.g.dart';
 
@@ -19,8 +17,8 @@ part 'json_enum.g.dart';
 @Target({TargetKind.enumType})
 class JsonEnum {
   const JsonEnum({
-    this.alwaysCreate = false,
-    this.fieldRename = FieldRename.none,
+    this.alwaysCreate,
+    this.fieldRename,
     this.valueField,
   });
 
@@ -55,4 +53,12 @@ class JsonEnum {
       _$JsonEnumFromJson(json);
 
   Map<String, dynamic> toJson() => _$JsonEnumToJson(this);
+
+  /// Combines this with another [JsonEnum], writing the fields that are null to
+  /// the value from [other].
+  JsonEnum combineWith(JsonEnum? other) => JsonEnum(
+        alwaysCreate: alwaysCreate ?? other?.alwaysCreate,
+        fieldRename: fieldRename ?? other?.fieldRename,
+        valueField: valueField ?? other?.valueField,
+      );
 }
