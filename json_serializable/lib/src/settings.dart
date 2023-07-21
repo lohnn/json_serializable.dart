@@ -45,7 +45,8 @@ class Settings {
         GenericFactoryHelper(),
       ].followedBy(_typeHelpers).followedBy(_coreHelpers);
 
-  final ClassConfig config;
+  final ClassConfig jsonSerializableConfig;
+  final ClassConfig jsonEnumConfig;
 
   /// Creates an instance of [Settings].
   ///
@@ -53,11 +54,14 @@ class Settings {
   /// [BigIntHelper], [DateTimeHelper], [DurationHelper], [JsonHelper], and
   /// [UriHelper].
   Settings({
-    JsonSerializable? config,
+    JsonSerializable? jsonSerializableConfig,
+    JsonEnum? jsonEnumConfig,
     List<TypeHelper>? typeHelpers,
-  })  : config = config != null
-            ? ClassConfig.fromJsonSerializable(config)
+  })  : jsonSerializableConfig = jsonSerializableConfig != null
+            ? ClassConfig.fromJsonSerializable(jsonSerializableConfig)
             : ClassConfig.defaults,
+        // TODO(lohnn): Enum configs and stuff
+        jsonEnumConfig = ClassConfig.defaults,
         _typeHelpers = typeHelpers ?? defaultHelpers;
 
   /// Creates an instance of [Settings].
@@ -71,7 +75,7 @@ class Settings {
     JsonSerializable? config,
   }) =>
       Settings(
-        config: config,
+        jsonSerializableConfig: config,
         typeHelpers: List.unmodifiable(typeHelpers.followedBy(defaultHelpers)),
       );
 }

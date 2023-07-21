@@ -4,10 +4,18 @@
 
 import 'package:meta/meta_meta.dart';
 
+import '../json_annotation.dart';
+import 'enum_helpers.dart';
 import 'json_serializable.dart';
-import 'json_value.dart';
+
+part 'json_enum.g.dart';
 
 /// Allows configuration of how `enum` elements are treated as JSON.
+@JsonSerializable(
+  checked: true,
+  disallowUnrecognizedKeys: true,
+  fieldRename: FieldRename.snake,
+)
 @Target({TargetKind.enumType})
 class JsonEnum {
   const JsonEnum({
@@ -22,7 +30,7 @@ class JsonEnum {
   ///
   /// The default, `false`, means no extra helpers are generated for this `enum`
   /// unless it is used by a class annotated with [JsonSerializable].
-  final bool alwaysCreate;
+  final bool? alwaysCreate;
 
   /// Defines the naming strategy when converting enum entry names to JSON
   /// values.
@@ -34,7 +42,7 @@ class JsonEnum {
   ///
   /// Note: the value for [JsonValue.value] takes precedence over this option
   /// for entries annotated with [JsonValue].
-  final FieldRename fieldRename;
+  final FieldRename? fieldRename;
 
   /// Specifies the field within an "enhanced enum" to use as the value
   /// to use for serialization.
@@ -42,4 +50,9 @@ class JsonEnum {
   /// If an individual `enum` element is annotated with `@JsonValue`
   /// that value still takes precedence.
   final String? valueField;
+
+  factory JsonEnum.fromJson(Map<String, dynamic> json) =>
+      _$JsonEnumFromJson(json);
+
+  Map<String, dynamic> toJson() => _$JsonEnumToJson(this);
 }

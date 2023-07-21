@@ -25,7 +25,7 @@ class GeneratorHelper extends HelperCore with EncodeHelper, DecodeHelper {
   ) : super(
             element,
             mergeConfig(
-              _generator.config,
+              _generator.jsonSerializableConfig,
               annotation,
               classElement: element,
             ));

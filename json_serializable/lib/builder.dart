@@ -23,8 +23,12 @@ import 'src/json_part_builder.dart';
 /// Not meant to be invoked by hand-authored code.
 Builder jsonSerializable(BuilderOptions options) {
   try {
-    final config = JsonSerializable.fromJson(options.config);
-    return jsonPartBuilder(config: config);
+    final jsonSerializableConfig = JsonSerializable.fromJson(options.config);
+    final jsonEnumConfig = JsonEnum.fromJson(options.config);
+    return jsonPartBuilder(
+      jsonSerializableConfig: jsonSerializableConfig,
+      jsonEnumConfig: jsonEnumConfig,
+    );
   } on CheckedFromJsonException catch (e) {
     final lines = <String>[
       'Could not parse the options provided for `json_serializable`.'

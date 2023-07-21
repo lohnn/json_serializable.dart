@@ -19,15 +19,19 @@ import 'settings.dart';
 /// the default Dart code formatter is used.
 Builder jsonPartBuilder({
   String Function(String code)? formatOutput,
-  JsonSerializable? config,
+  JsonSerializable? jsonSerializableConfig,
+  JsonEnum? jsonEnumConfig,
 }) {
-  final settings = Settings(config: config);
+  final settings = Settings(
+    jsonSerializableConfig: jsonSerializableConfig,
+    jsonEnumConfig: jsonEnumConfig,
+  );
 
   return SharedPartBuilder(
     [
       _UnifiedGenerator([
         JsonSerializableGenerator.fromSettings(settings),
-        const JsonEnumGenerator(),
+        JsonEnumGenerator.fromSettings(settings),
       ]),
       const JsonLiteralGenerator(),
     ],
